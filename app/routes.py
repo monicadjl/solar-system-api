@@ -25,3 +25,10 @@ planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
 def handle_planets():
     planet_dict = [vars(planet) for planet in planets]
     return jsonify(planet_dict), 200
+
+@planets_bp.route("/<planet_id>", methods=["GET"] )
+def single_planet(planet_id):
+    planet_id = int(planet_id)
+    for planet in planets:
+        if planet.id == planet_id:
+            return jsonify(vars(planet)), 200
