@@ -40,7 +40,10 @@ planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
 #     abort(make_response({"msg": f"planet id: {planet_id} not found."}, 404))
 
 @planets_bp.route("", methods=["GET"])
-def handle_planets():
+def get_all_planets():
+    #grab all info from the instance planet table
+    planets = Planet.query.all()
+
     planet_dict = [vars(planet) for planet in planets]
     return jsonify(planet_dict), 200
 
