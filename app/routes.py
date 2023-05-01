@@ -26,19 +26,21 @@ from app import db
 
 planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
 
-# def validate_planet(planet_id):
-#     #handle invalid planet id, return 400
-#     try:
-#         planet_id = int(planet_id)
-#     except: 
-#         abort(make_response({"msg": f"planet id: {planet_id} is invalid."}, 400))
-#     #search for planet_id in data and return planet
-#     for planet in planets:
-#             if planet.id == planet_id:
-#                 abort(make_response(jsonify(vars(planet)), 200))
-#     #return 404 for nonexistant planet
-#     abort(make_response({"msg": f"planet id: {planet_id} not found."}, 404))
-
+def validate_planet(planet_id):
+    #handle invalid planet id, return 400
+    try:
+        planet_id = int(planet_id)
+    except: 
+        abort(make_response({"msg": f"planet id: {planet_id} is invalid."}, 400))
+    
+    planet = Planet.query.get(planet_id)
+    
+    return planet if planet else abort(make_response({"msg": f"planet id: {planet_id} not found."}, 404))
+    
+   
+    #return 404 for nonexistant planet
+    
+    
 @planets_bp.route("", methods=["GET"])
 def get_all_planets():
     #grab all info from the instance planet table
@@ -49,8 +51,11 @@ def get_all_planets():
 
 @planets_bp.route("/<planet_id>", methods=["GET"] )
 def single_planet(planet_id):
-    planet = validate_planet(planet_id)
-    return planet
+    
+    get_planet = Planet.query.get(planet_id)
+    planet = validate_planet(get_planet.id)
+
+    return vars(jsonify(get_planet))
 
 @planets_bp.route("", methods=['POST'])
 def create_planet():
