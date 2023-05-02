@@ -44,7 +44,12 @@ def validate_planet(planet_id):
 @planets_bp.route("", methods=["GET"])
 def get_all_planets():
     #grab all info from the instance planet table
-    planets = Planet.query.all()
+    title_query = request.args.get("name")
+    if title_query:
+        planets = Planet.query.filter_by(name=title_query)
+    else:
+        planets = Planet.query.all()
+        
     planet_dict = [planet.make_dict() for planet in planets]
     return jsonify(planet_dict), 200
 
