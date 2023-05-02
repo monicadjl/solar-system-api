@@ -34,35 +34,54 @@ def validate_planet(planet_id):
         abort(make_response({"msg": f"planet id: {planet_id} is invalid."}, 400))
     
     planet = Planet.query.get(planet_id)
-    
-    return planet if planet else abort(make_response({"msg": f"planet id: {planet_id} not found."}, 404))
-    
-   
-    #return 404 for nonexistant planet
-    
+    if planet is None:
+        abort(make_response({"msg": f"planet id: {planet_id} not found."}, 404))
+
+    return planet 
+
+ 
     
 @planets_bp.route("", methods=["GET"])
 def get_all_planets():
     #grab all info from the instance planet table
     planets = Planet.query.all()
-
-    planet_dict = [vars(planet) for planet in planets]
+    planet_dict = [planet.make_dict() for planet in planets]
     return jsonify(planet_dict), 200
 
-@planets_bp.route("/<planet_id>", methods=["GET"] )
+@planets_bp.route("/<planet_id>", methods=["GET"])
 def single_planet(planet_id):
-    
+    planet = validate_planet(planet_id)
+    return jsonify(planet.make_dict()), 200
+
+@planets_bp.route("/<planet_id>", methods=["PUT"])
+def update_planet(planet_id):
     get_planet = Planet.query.get(planet_id)
     planet = validate_planet(get_planet.id)
 
-    return vars(jsonify(get_planet))
+    request_body = request.get_json()
+    planet.name = request_body["name"]
+    planet.position = request_body["position"]
+    planet.moon_count = request_body["moon_count"]
+
+    db.session.commit()
+    
+    return jsonify(planet.make_dict()), 200
+
+@planets_bp.route("/<planet_id>", methods=["DELETE"])
+def delete_single_planet(planet_id):
+    planet = validate_planet(planet_id)
+
+    db.session.delete(planet)    
+    db.session.commit()
+
+    return f"Planet at id:{planet_id} was sucessfully deleted", 200
 
 @planets_bp.route("", methods=['POST'])
 def create_planet():
     request_body = request.get_json()
     new_planet = Planet(name=request_body["name"],
-                         position=request_body["position"], 
-                         moon_count=request_body["moon_count"])
+                        position=request_body["position"], 
+                        moon_count=request_body["moon_count"])
     
     db.session.add(new_planet)
     db.session.commit()

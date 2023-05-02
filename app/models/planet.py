@@ -6,4 +6,8 @@ class Planet(db.Model):
     position = db.Column(db.Integer)
     moon_count = db.Column(db.String)
 
-   
+    def make_dict(self):
+        return {"id": self.id,
+                "name": self.name,
+                "position": self.position,
+                "moon_count": self.moon_count} 
