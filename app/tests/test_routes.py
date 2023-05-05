@@ -8,7 +8,7 @@ def test_get_all_planets_with_no_records(client):
     assert response.status_code == 200
     assert response_body == []
 
-def test_get_all_planets_with_populated_db(client, two_planets):
+def test_get_all_planets_with_populated_db(client, two_saved_planets):
     response = client.get('/planets')
     response_body = response.get_json()
 
@@ -23,7 +23,7 @@ def test_get_all_planets_with_populated_db(client, two_planets):
         {
             "id": 2,
             "name": "monica",
-            "positio" : 666,
+            "position" : 666,
             "moon_count": 69
         },
     ]
@@ -56,6 +56,6 @@ def test_create_one_planet(client):
 
     # Assert
     assert response.status_code == 201
-    assert response_body == {'msg': 'Planet selene successfully created!'}
-
-    
+    assert "msg" in response_body      
+    assert response_body["id"] == 1
+    assert response_body["name"] == "selene"
