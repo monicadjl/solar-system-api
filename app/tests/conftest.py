@@ -31,15 +31,15 @@ def client(app):
 @pytest.fixture
 def two_saved_planets(app):
     # Arrange
-    susi_planet = Planet(id= 1,
-                name = "susi",
-                position= 3,
-                moon_count= 32) 
+    susi_planet = Planet(id=1,
+                name="susi",
+                position=3,
+                moon_count=32) 
     
-    monica_planet = Planet(id= 2,
-                name = "monica",
-                position= 666,
-                moon_count= 69 )
+    monica_planet = Planet(id=2,
+                name="monica",
+                position=666,
+                moon_count=69)
 
     db.session.add_all([susi_planet, monica_planet])
     # Alternatively, we could do
