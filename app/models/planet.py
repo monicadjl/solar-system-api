@@ -14,6 +14,7 @@ class Planet(db.Model):
         new_dict["moon_count"] = self.moon_count
         return new_dict
     
+    @classmethod
     def from_dict(cls, planet_data):
         new_planet = Planet(name=planet_data["name"], 
                             position=planet_data["position"],

@@ -59,3 +59,18 @@ def test_create_one_planet(client):
     assert "msg" in response_body      
     assert response_body["id"] == 1
     assert response_body["name"] == "selene"
+
+def test_update_one_planet_updates_planet_in_db(client, two_saved_planets):
+    response = client.put("/planets/1", json={
+        "name": "updated_name",
+        "position": 1,
+        "moon_count": 1
+        }
+    )
+
+    response_body = response.get_json()
+
+    assert response.status_code == 200
+    assert response_body["id"] == 1
+    assert response_body["name"] == "updated_name"
+    assert response_body["position"] == 1

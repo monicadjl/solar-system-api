@@ -51,7 +51,7 @@ def update_planet(planet_id):
 
     db.session.commit()
     
-    return jsonify(planet.make_dict()), 200
+    return jsonify(planet.to_dict()), 200
 
 @planets_bp.route("/<planet_id>", methods=["DELETE"])
 def delete_single_planet(planet_id):
