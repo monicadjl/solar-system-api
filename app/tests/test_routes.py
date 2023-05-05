@@ -1,6 +1,3 @@
-
-
-
 #get all books and return no records
 def test_get_all_planets_with_no_records(client):
     # Act
@@ -11,9 +8,29 @@ def test_get_all_planets_with_no_records(client):
     assert response.status_code == 200
     assert response_body == []
 
+def test_get_all_planets_with_populated_db(client, two_planets):
+    response = client.get('/planets')
+    response_body = response.get_json()
+
+    assert response.status_code == 200
+    assert response_body == [
+        {
+            "id": 1,
+            "name": "susi",
+            "position": 3,
+            "moon_count": 32
+        },
+        {
+            "id": 2,
+            "name": "monica",
+            "positio" : 666,
+            "moon_count": 69
+        },
+    ]
+
 
 #get one planet by id
-def test_get_one_planets(client, two_saved_planets):
+def test_get_one_planet(client, two_saved_planets):
     # Act
     response = client.get("/planets/1")
     response_body = response.get_json()
@@ -21,12 +38,13 @@ def test_get_one_planets(client, two_saved_planets):
     # Assert
     assert response.status_code == 200
     assert response_body == {
-                "id" : 1,
-                "name" : "susi",
-                "position": 3,
-                "moon_count": 32
+                "id":1,
+                "name":"susi",
+                "position":3,
+                "moon_count":32
     }
 
+#create one planet
 def test_create_one_planet(client):
     # Act
     response = client.post("/planets", json={
@@ -38,7 +56,6 @@ def test_create_one_planet(client):
 
     # Assert
     assert response.status_code == 201
-    assert response_body["position"] == 44
-    assert response_body["name"] == "selene"
+    assert response_body == {'msg': 'Planet selene successfully created!'}
 
     
