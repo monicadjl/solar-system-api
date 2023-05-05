@@ -57,13 +57,13 @@ def get_all_planets():
 
 @planets_bp.route("/<planet_id>", methods=["GET"])
 def single_planet(planet_id):
-    planet = validate_planet(planet_id)
+    planet = validate_model_by_id(Planet, planet_id)
     return jsonify(planet.make_dict()), 200
 
 @planets_bp.route("/<planet_id>", methods=["PUT"])
 def update_planet(planet_id):
     get_planet = Planet.query.get(planet_id)
-    planet = validate_planet(get_planet.id)
+    planet = validate_model_by_id(Planet, planet_id)
 
     request_body = request.get_json()
     planet.name = request_body["name"]
@@ -76,7 +76,7 @@ def update_planet(planet_id):
 
 @planets_bp.route("/<planet_id>", methods=["DELETE"])
 def delete_single_planet(planet_id):
-    planet = validate_planet(planet_id)
+    planet = validate_model_by_id(Planet, planet_id)
 
     db.session.delete(planet)    
     db.session.commit()
