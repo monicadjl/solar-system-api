@@ -26,32 +26,34 @@ from app import db
 
 planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
 
-def validate_planet(planet_id):
+def validate_model_by_id(cls, id):
     #handle invalid planet id, return 400
     try:
-        planet_id = int(planet_id)
+        planet_id = int(id)
     except: 
-        abort(make_response({"msg": f"planet id: {planet_id} is invalid."}, 400))
-    
-    planet = Planet.query.get(planet_id)
-    if planet is None:
-        abort(make_response({"msg": f"planet id: {planet_id} not found."}, 404))
+        abort(make_response({"msg": f"{cls.__name__}{id} is invalid."}, 400))
+    model = cls.query.get(id)
+   
+    if model is None:
+        abort(make_response({"msg": f"{cls.__name__} {id} not found."}, 404))
 
-    return planet 
+    return model 
 
  
     
 @planets_bp.route("", methods=["GET"])
 def get_all_planets():
-    #grab all info from the instance planet table
+    
     title_query = request.args.get("name")
+
     if title_query:
         planets = Planet.query.filter_by(name=title_query)
+    #grab all info from the instance planet table
     else:
         planets = Planet.query.all()
         
-    planet_dict = [planet.make_dict() for planet in planets]
-    return jsonify(planet_dict), 200
+    all_planets = [planet.to_dict() for planet in planets]
+    return jsonify(all_planets), 200
 
 @planets_bp.route("/<planet_id>", methods=["GET"])
 def single_planet(planet_id):
@@ -84,9 +86,7 @@ def delete_single_planet(planet_id):
 @planets_bp.route("", methods=['POST'])
 def create_planet():
     request_body = request.get_json()
-    new_planet = Planet(name=request_body["name"],
-                        position=request_body["position"], 
-                        moon_count=request_body["moon_count"])
+    new_planet = Planet.from_dict(request_body)
     
     db.session.add(new_planet)
     db.session.commit()
