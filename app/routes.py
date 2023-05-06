@@ -1,22 +1,24 @@
 from flask import Blueprint, jsonify, abort, make_response, request
-from os import abort
 from app.models.planet import Planet
 from app import db
 
 planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
 
-def validate_model_by_id(cls, id):
+def validate_model_by_id(model, id):
     #handle invalid planet id, return 400
+   
     try:
+        print(id)
         id = int(id)
     except: 
-        abort(make_response({"msg": f"{cls.__name__}{id} is invalid."}, 400))
-    model = cls.query.get(id)
+        abort(make_response(jsonify({"msg": f"{model.__name__}{id} is invalid."}), 400))
+    
+    model_object = model.query.get(id)
+    
+    if model_object is None:
+        abort(make_response(jsonify({"msg": f"{model.__name__}{id} not found."}), 404))
 
-    if model is None:
-        abort(make_response({"msg": f"{cls.__name__} {id} not found."}, 404))
-
-    return model 
+    return model_object 
 
 
     

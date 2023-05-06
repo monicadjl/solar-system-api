@@ -28,6 +28,10 @@ def test_get_all_planets_with_populated_db(client, two_saved_planets):
         },
     ]
 
+def test_get_one_planet_empty_db_returns_404(client):
+    response = client.get("/planets/10")
+
+    assert response.status_code == 404
 
 #get one planet by id
 def test_get_one_planet(client, two_saved_planets):
@@ -74,3 +78,7 @@ def test_update_one_planet_updates_planet_in_db(client, two_saved_planets):
     assert response_body["id"] == 1
     assert response_body["name"] == "updated_name"
     assert response_body["position"] == 1
+
+def test_returns_400_with_invalid_planet_id(client):
+    response = client.get("/planets/Mars")
+    assert response.status_code == 400
