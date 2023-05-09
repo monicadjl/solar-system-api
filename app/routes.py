@@ -8,7 +8,6 @@ def validate_model_by_id(model, id):
     #handle invalid planet id, return 400
    
     try:
-        print(id)
         id = int(id)
     except: 
         abort(make_response(jsonify({"msg": f"{model.__name__}{id} is invalid."}), 400))
