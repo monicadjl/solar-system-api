@@ -13,7 +13,7 @@ def create_app(test_config=None):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     if not test_config:
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DEVELOPMENT_DATABASE')
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('RENDER_DATABASE')
     else:
         app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('TEST_DATABASE')
     
